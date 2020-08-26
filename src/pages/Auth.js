@@ -75,7 +75,6 @@ class AuthPage extends Component {
             .then(res => {
                 if (res.status !== 200 && res.status !== 201) {
                     throw new Error('Failed!');
-                    alert("something went wrong");
                 }
                 return res.json();
             })
@@ -88,12 +87,12 @@ class AuthPage extends Component {
                         resData.data.login.tokenExpiration,
                     );
                 }
-                alert("success");
+                alert('success');
             })
             .catch(err => {
                 console.log('niko hapa');
                 console.log(err);
-                alert("something went wrong");
+                alert('something went wrong');
             });
     };
 
