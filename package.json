@@ -50,5 +50,5 @@
         "tabWidth": 4,
         "singleQuote": true
     },
-    "proxy": "https://sleepy-retreat-06399.herokuapp.com/"
+    "proxy": "https://sleepy-retreat-06399.herokuapp.com/graphql"
 }

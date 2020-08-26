@@ -38,7 +38,7 @@ class BookingsPage extends Component {
         `
         };
 
-        fetch('https://sleepy-retreat-06399.herokuapp.com/', {
+        fetch('https://sleepy-retreat-06399.herokuapp.com/graphql', {
             method: 'POST',
             body: JSON.stringify(requestBody),
             headers: {
@@ -78,7 +78,7 @@ class BookingsPage extends Component {
             }
         };
 
-        fetch('https://sleepy-retreat-06399.herokuapp.com/', {
+        fetch('https://sleepy-retreat-06399.herokuapp.com/graphql', {
             method: 'POST',
             body: JSON.stringify(requestBody),
             headers: {
