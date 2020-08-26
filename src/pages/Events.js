@@ -74,7 +74,7 @@ console.log(event);
 
         const token = this.context.token;
 
-        fetch('http://localhost:8000/graphql', {
+        fetch('https://sleepy-retreat-06399.herokuapp.com/', {
             method: 'POST',
             body: JSON.stringify(requestBody),
             headers: {
@@ -133,7 +133,7 @@ console.log(event);
         `
         };
 
-        fetch('http://localhost:8000/graphql', {
+        fetch('https://sleepy-retreat-06399.herokuapp.com/', {
             method: 'POST',
             body: JSON.stringify(requestBody),
             headers: {
@@ -185,7 +185,7 @@ console.log(event);
             }
         };
 
-        fetch('http://localhost:8000/graphql', {
+        fetch('https://sleepy-retreat-06399.herokuapp.com/', {
             method: 'POST',
             body: JSON.stringify(requestBody),
             headers: {
