@@ -12,7 +12,7 @@ class EventsPage extends Component {
         creating: false,
         events: [],
         isLoading: false,
-        selectedEvent: null
+        selectedEvent: null,
     };
     isActive = true;
 
@@ -35,28 +35,32 @@ class EventsPage extends Component {
     };
 
     modalConfirmHandler = () => {
-            console.log("Niko hapa msee");    
+        console.log('Niko hapa msee');
         this.setState({ creating: false });
         const title = this.titleElRef.current.value;
         const price = +this.priceElRef.current.value;
         const date = this.dateElRef.current.value;
         const description = this.descriptionElRef.current.value;
         console.log(date);
-          const events = { title, price, date, description };
-        
-        if ( title.trim().length === 0 ||price <= 0 ||date.trim().length === 0 ||description.trim().length === 0
+        const events = { title, price, date, description };
+
+        if (
+            title.trim().length === 0 ||
+            price <= 0 ||
+            date.trim().length === 0 ||
+            description.trim().length === 0
         ) {
-              console.log(events);
-        return;
+            console.log(events);
+            return;
         }
-const event = { title, price, date, description };
-console.log(event);
+        const event = { title, price, date, description };
+        console.log(event);
 
         const requestBody = {
             query: `
             mutation CreateEvent($title: String!, $desc: String!, $price: Float!, $date: String!) {
-                createEvent(eventInput: {title: $title, description: $desc, price: $price, date: $date}) {
-                _id
+                createEvent(title: $title, description: $desc, price: $price, date: $date) {
+                id
                 title
                 description
                 date
@@ -64,12 +68,12 @@ console.log(event);
                 }
             }
         `,
-        variables: {
-            title: title,
-            desc: description,
-            price: price,
-            date: date
-        }
+            variables: {
+                title: title,
+                desc: description,
+                price: price,
+                date: date,
+            },
         };
 
         const token = this.context.token;
@@ -79,8 +83,8 @@ console.log(event);
             body: JSON.stringify(requestBody),
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + token
-            }
+                Authorization: 'Bearer ' + token,
+            },
         })
             .then(res => {
                 if (res.status !== 200 && res.status !== 201) {
@@ -92,14 +96,14 @@ console.log(event);
                 this.setState(prevState => {
                     const updatedEvents = [...prevState.events];
                     updatedEvents.push({
-                        _id: resData.data.createEvent._id,
+                        id: resData.data.createEvent.id,
                         title: resData.data.createEvent.title,
                         description: resData.data.createEvent.description,
                         date: resData.data.createEvent.date,
                         price: resData.data.createEvent.price,
-                        creator: {
-                            _id: this.context.userId
-                        }
+                        creatorId: {
+                            id: this.context.userId,
+                        },
                     });
                     return { events: updatedEvents };
                 });
@@ -119,26 +123,26 @@ console.log(event);
             query: `
             query {
                 events {
-                _id
+                id
                 title
                 description
                 date
                 price
-                creator {
-                    _id
+                creatorId{
+                    id
                     email
                 }
                 }
             }
-        `
+        `,
         };
 
         fetch('https://sleepy-retreat-06399.herokuapp.com/graphql', {
             method: 'POST',
             body: JSON.stringify(requestBody),
             headers: {
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/json',
+            },
         })
             .then(res => {
                 if (res.status !== 200 && res.status !== 201) {
@@ -148,19 +152,18 @@ console.log(event);
             })
             .then(resData => {
                 const events = resData.data.events;
-                if(this.isActive)
+                if (this.isActive)
                     this.setState({ events: events, isLoading: false });
             })
             .catch(err => {
                 console.log(err);
-                if(this.isActive)
-                    this.setState({ isLoading: false });
+                if (this.isActive) this.setState({ isLoading: false });
             });
     }
 
     showDetailHandler = eventId => {
         this.setState(prevState => {
-            const selectedEvent = prevState.events.find(e => e._id === eventId);
+            const selectedEvent = prevState.events.find(e => e.id === eventId);
             return { selectedEvent: selectedEvent };
         });
     };
@@ -174,15 +177,15 @@ console.log(event);
             query: `
                 mutation BookEvent($id: ID!) {
                     bookEvent(eventId: $id) {
-                    _id
+                    id
                     createdAt
                     updatedAt
                     }
                 }
             `,
             variables: {
-                id: this.state.selectedEvent._id
-            }
+                id: this.state.selectedEvent.id,
+            },
         };
 
         fetch('https://sleepy-retreat-06399.herokuapp.com/graphql', {
@@ -190,8 +193,8 @@ console.log(event);
             body: JSON.stringify(requestBody),
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + this.context.token
-            }
+                Authorization: 'Bearer ' + this.context.token,
+            },
         })
             .then(res => {
                 if (res.status !== 200 && res.status !== 201) {
@@ -215,7 +218,9 @@ console.log(event);
     render() {
         return (
             <React.Fragment>
-                {(this.state.creating || this.state.selectedEvent) && <Backdrop />}
+                {(this.state.creating || this.state.selectedEvent) && (
+                    <Backdrop />
+                )}
                 {this.state.creating && (
                     <Modal
                         title="Add Event"
@@ -228,15 +233,27 @@ console.log(event);
                         <form>
                             <div className="form-control">
                                 <label htmlFor="title">Title</label>
-                                <input type="text" id="title" ref={this.titleElRef} />
+                                <input
+                                    type="text"
+                                    id="title"
+                                    ref={this.titleElRef}
+                                />
                             </div>
                             <div className="form-control">
                                 <label htmlFor="price">Price</label>
-                                <input type="number" id="price" ref={this.priceElRef} />
+                                <input
+                                    type="number"
+                                    id="price"
+                                    ref={this.priceElRef}
+                                />
                             </div>
                             <div className="form-control">
                                 <label htmlFor="date">Date</label>
-                                <input type="date" id="date" ref={this.dateElRef} />
+                                <input
+                                    type="date"
+                                    id="date"
+                                    ref={this.dateElRef}
+                                />
                             </div>
                             <div className="form-control">
                                 <label htmlFor="description">Description</label>
@@ -261,7 +278,9 @@ console.log(event);
                         <h1>{this.state.selectedEvent.title}</h1>
                         <h2>
                             ${this.state.selectedEvent.price} -{' '}
-                            {new Date(this.state.selectedEvent.date).toLocaleDateString()}
+                            {new Date(
+                                this.state.selectedEvent.date,
+                            ).toLocaleDateString()}
                         </h2>
                         <p>{this.state.selectedEvent.description}</p>
                     </Modal>
@@ -269,20 +288,23 @@ console.log(event);
                 {this.context.token && (
                     <div className="events-control">
                         <p>Share your own Events!</p>
-                        <button className="btn" onClick={this.startCreateEventHandler}>
+                        <button
+                            className="btn"
+                            onClick={this.startCreateEventHandler}
+                        >
                             Create Event
-            </button>
+                        </button>
                     </div>
                 )}
                 {this.state.isLoading ? (
                     <Spinner />
                 ) : (
-                        <EventList
-                            events={this.state.events}
-                            authUserId={this.context.userId}
-                            onViewDetail={this.showDetailHandler}
-                        />
-                    )}
+                    <EventList
+                        events={this.state.events}
+                        authUserId={this.context.userId}
+                        onViewDetail={this.showDetailHandler}
+                    />
+                )}
             </React.Fragment>
         );
     }

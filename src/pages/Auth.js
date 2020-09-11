@@ -52,8 +52,8 @@ class AuthPage extends Component {
             requestBody = {
                 query: `
             mutation CreateUser($email: String!, $password: String!) {
-                createUser(userInput: {email: $email, password: $password}) {
-                _id
+                createUser(email: $email, password: $password) {
+                id
                 email
                 }
             }
@@ -64,7 +64,7 @@ class AuthPage extends Component {
                 },
             };
         }
-
+        console.log(requestBody);
         fetch('https://sleepy-retreat-06399.herokuapp.com/graphql', {
             method: 'POST',
             body: JSON.stringify(requestBody),
@@ -73,13 +73,14 @@ class AuthPage extends Component {
             },
         })
             .then(res => {
+                console.log(res);
                 if (res.status !== 200 && res.status !== 201) {
                     throw new Error('Failed!');
                 }
                 return res.json();
             })
             .then(resData => {
-                console.log('testing');
+                console.log(resData);
                 if (resData.data.login.token) {
                     this.context.login(
                         resData.data.login.token,

@@ -25,10 +25,10 @@ class BookingsPage extends Component {
             query: `
             query {
                 bookings {
-                _id
+                id
                 createdAt
-                event {
-                    _id
+                eventId {
+                    id
                     title
                     date
                     price
@@ -68,7 +68,7 @@ class BookingsPage extends Component {
             query: `
                 mutation CancelBooking($id: ID!) {
                     cancelBooking(bookingId: $id) {
-                    _id
+                    id
                     title
                     }
                 }
@@ -95,7 +95,7 @@ class BookingsPage extends Component {
             .then(resData => {
                 this.setState(prevState => {
                     const updatedBookings = prevState.bookings.filter(booking => {
-                        return booking._id !== bookingId;
+                        return booking.id !== bookingId;
                     });
                     return { bookings: updatedBookings, isLoading: false };
                 });
